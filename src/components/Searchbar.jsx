@@ -17,6 +17,7 @@ export default class SearchBar extends Component {
                         autoComplete="off"
                         autoFocus
                         placeholder="Search images and photos"
+                        onChange={(e)=>this.props.hangleSearch(e.target.value)}
                     />
                 </form>
             </header>

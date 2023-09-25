@@ -2,8 +2,8 @@ import { Component } from "react";
 import ImageGalleryItem from "./ImageGalleryItem";
 
 export default class ImageGallery extends Component {
+    
     render() {
-        console.log(this.props)
         return (
             <ul className="ImageGallery">
                 {
