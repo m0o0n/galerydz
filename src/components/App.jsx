@@ -17,33 +17,47 @@ export class App extends Component {
     this.setState((prev) => ({ page: prev.page + 1 }))
   }
 
-  hangleSearch = (e) => { 
-    this.setState({query: e, page: 1})
+  hangleSearch = (e) => {
+    this.setState({ query: e, page: 1 })
   }
 
   componentDidUpdate(_, prevState) {
-    if (prevState.page !== this.state.page ) {
+    if (prevState.page !== this.state.page) {
+      this.setState({ isLoading: true })
       fetchImages(this.state.page, this.state.query).then((data) => {
-        prevState.query !== this.state.query 
-        ? this.setState({ gallery: data.hits })
-        : this.setState((prev) => ({ gallery: [...prev.gallery, ...data.hits] }))
-        
+        setTimeout(() => {
+          prevState.query !== this.state.query
+            ? this.setState({ gallery: data.hits })
+            : this.setState((prev) => ({ gallery: [...prev.gallery, ...data.hits] }))
+
+          this.setState({ isLoading: false })
+        }, 1000)
       })
-      
-    } else if(prevState.query !== this.state.query){
+
+    } else if (prevState.query !== this.state.query) {
+      this.setState({ isLoading: true })
       fetchImages(this.state.page, this.state.query).then(({ hits }) => {
-        this.setState({ gallery: hits })
+        setTimeout(() => {
+          this.state.query
+            ? this.setState({ gallery: hits })
+            : this.setState({ gallery: [] })
+
+          this.setState({ isLoading: false })
+        }, 1000)
       })
     }
   }
 
   componentDidMount() {
+    if (!Boolean(this.state.query)) {
+      this.setState({ gallery: [], isLoading: false })
+    }
     fetchImages(this.state.page).then(({ hits }) => {
       setTimeout(() => {
-        this.state.query 
-        ? this.setState({ gallery: hits, isLoading: false })
-        : this.setState({ gallery: [], isLoading: false })
-        
+        this.state.query
+          ? this.setState({ gallery: hits, isLoading: false })
+          : this.setState({ gallery: [], isLoading: false })
+
       }, 1000)
     }).catch((err) => {
       this.setState({ err, isLoading: false })
@@ -54,7 +68,7 @@ export class App extends Component {
       <div className="App">
         <SearchBar
           hangleSearch={this.hangleSearch}
-         />
+        />
         {
           this.state.isLoading
             ? <Loader />
