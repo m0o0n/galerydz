@@ -24,7 +24,10 @@ export class App extends Component {
   componentDidUpdate(_, prevState) {
     if (prevState.page !== this.state.page ) {
       fetchImages(this.state.page, this.state.query).then((data) => {
-        this.setState((prev) => ({ gallery: [...prev.gallery, ...data.hits] }))
+        prevState.query !== this.state.query 
+        ? this.setState({ gallery: data.hits })
+        : this.setState((prev) => ({ gallery: [...prev.gallery, ...data.hits] }))
+        
       })
       
     } else if(prevState.query !== this.state.query){
@@ -37,7 +40,10 @@ export class App extends Component {
   componentDidMount() {
     fetchImages(this.state.page).then(({ hits }) => {
       setTimeout(() => {
-        this.setState({ gallery: hits, isLoading: false })
+        this.state.query 
+        ? this.setState({ gallery: hits, isLoading: false })
+        : this.setState({ gallery: [], isLoading: false })
+        
       }, 1000)
     }).catch((err) => {
       this.setState({ err, isLoading: false })
